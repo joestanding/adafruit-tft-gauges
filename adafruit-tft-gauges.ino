@@ -184,7 +184,7 @@ void update_measurements() {
   /* Generate some simulated values for car sensors */
   coolTemp.set_value(random(42, 47));
   oilTemp.set_value(random(132, 133));
-  oilPres.set_value(random(37, 38));
+  oilPres.set_value(random(36, 38));
   iat.set_value(random(24, 27));
   boost.set_value(random(18, 21));
 }
