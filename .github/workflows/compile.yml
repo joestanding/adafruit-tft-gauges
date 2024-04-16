@@ -25,4 +25,11 @@ jobs:
             - ./
           libraries: |
             # The "blink" sketch being compiled in this demo doesn't use any libraries, so just use an empty list
-            -
+            - Adafruit_BusIO
+            - Adafruit_FT6206_Library
+            - Adafruit_GFX_Library
+            - Adafruit_ILI9341
+            - Adafruit_SH110X
+            - Adafruit_STMPE610
+            - Adafruit_TouchScreen
+            - Adafruit_TSC2007
