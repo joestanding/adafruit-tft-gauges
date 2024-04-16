@@ -25,5 +25,9 @@ jobs:
             - ./
           libraries: |
             # The "blink" sketch being compiled in this demo doesn't use any libraries, so just use an empty list
-            - name: Adafruit_BusIO
-              source-url: https://github.com/adafruit/Adafruit_BusIO/archive/refs/tags/1.15.0.zip
+            - source-url: https://github.com/adafruit/Adafruit_BusIO/archive/refs/tags/1.15.0.zip
+            - source-url: https://github.com/adafruit/Adafruit_FT6206_Library/archive/refs/tags/1.1.0.zip
+            - source-url: https://github.com/adafruit/Adafruit-GFX-Library/archive/refs/tags/1.11.9.zip
+            - source-url: https://github.com/adafruit/Adafruit_ILI9341/archive/refs/tags/1.6.0.zip
+            - source-url: https://github.com/adafruit/Adafruit_TouchScreen/archive/refs/tags/1.1.5.zip
+              
