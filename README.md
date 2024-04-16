@@ -1,4 +1,5 @@
 # Adafruit TFT Gauge Library
+[![Build Status](https://github.com/joestanding/adafruit-tft-gauges/workflows/Compile%20Sketch/badge.svg)]
 
 This library currently provides two types of configurable visual gauges that can be used on an Adafruit TFT screen to display various types of numerical information. The library was developed for my own personal needs, but I've tried to make the gauges fairly configurable so they should also be suitable for many other applications.
 
@@ -93,7 +94,7 @@ void ExampleLayout::draw() {
 ```
 
 ### Switching Layouts
-When switching layouts, it's essential to clear the screen using a function such as `display.fillScreen(<color>)`, and force a redraw of the next layout using the `redraw()` function. This is essential as much of a gauge will only be drawn once, and only redrawn when necessary. Invoking the `redraw()` function tells the gauge that as the screen has been erased, it is now necessary for it to fully redrawn itself.
+When switching layouts, it's essential to clear the screen using a function such as `display.fillScreen(<color>)`, and force a redraw of the next layout using the `redraw()` function. This is essential as much of a gauge will only be drawn once, and only redrawn when necessary. Invoking the `redraw()` function tells the gauge that as the screen has been erased, it is now necessary for it to fully redraw itself.
 
 The demonstration code includes an example of this, but I've included it below as well:
 ```cpp
