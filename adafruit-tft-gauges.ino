@@ -20,19 +20,19 @@
 /* Measurement Set-up                                                        */
 /* ------------------------------------------------------------------------- */
 
-/* Analog to Digital Converter Pin Values */
-Measurement adc0Data = Measurement("ADC0");
-Measurement adc1Data = Measurement("ADC1");
-Measurement adc2Data = Measurement("ADC2");
-Measurement adc3Data = Measurement("ADC3");
-Measurement adc4Data = Measurement("ADC4");
-
 /* Simulated Car Sensor Data */
-Measurement coolTemp = Measurement("CoolT");
-Measurement oilTemp  = Measurement("OilT");
-Measurement oilPres  = Measurement("OilP");
-Measurement iat      = Measurement("IAT");
-Measurement boost    = Measurement("Boost");
+Measurement coolTemp = Measurement();
+Measurement oilTemp  = Measurement();
+Measurement oilPres  = Measurement();
+Measurement iat      = Measurement();
+Measurement boost    = Measurement();
+
+/* Values to test drawing of values in and out of bounds */
+Measurement testMax  = Measurement();
+Measurement testMin  = Measurement();
+Measurement testNeg  = Measurement();
+Measurement testBelowMin = Measurement();
+Measurement testAboveMax = Measurement();
 
 /* ------------------------------------------------------------------------- */
 /* Device Initialisation                                                     */
@@ -49,88 +49,121 @@ void setup() {
   display.setTextColor(WHITE, BLACK);
   touchscreen.begin();
 
-  /* ADC bar gauge initialisation */
-  BarGauge * adcGauge0 = new BarGauge(&display, &adc0Data, "ADC0", 0, 512);
-  adcGauge0->set_colour_normal(RED);
-  BarGauge * adcGauge1 = new BarGauge(&display, &adc1Data, "ADC1", 0, 512);
-  adcGauge1->set_colour_normal(GREEN);
-  BarGauge * adcGauge2 = new BarGauge(&display, &adc2Data, "ADC2", 0, 512);
-  adcGauge2->set_colour_normal(BLUE);
-  BarGauge * adcGauge3 = new BarGauge(&display, &adc3Data, "ADC3", 0, 512);
-  adcGauge3->set_colour_normal(YELLOW);
-  BarGauge * adcGauge4 = new BarGauge(&display, &adc4Data, "ADC4", 0, 512);
-  adcGauge4->set_colour_normal(ORANGE);
-  adcLayout.add_gauge(adcGauge0);
-  adcLayout.add_gauge(adcGauge1);
-  adcLayout.add_gauge(adcGauge2);
-  adcLayout.add_gauge(adcGauge3);
-  adcLayout.add_gauge(adcGauge4);
-
-  /* Car bar gauge initialisation */
+  /* Coolant temperature bar: ensuring our coolant is not too hot is the
+     priority, as this will allow the engine to overheat. We set the bar
+     to red in this scenario, but also add a lower limit just to tell us
+     when the coolant is still quite cold. */
   BarGauge * coolTBar = new BarGauge(&display, &coolTemp, "CoolT", 0, 100);
   coolTBar->set_limit_higher(100);
-  coolTBar->set_limit_lower(70);
+  coolTBar->set_limit_lower(50);
   coolTBar->set_colour_low(CYAN);
   coolTBar->set_colour_normal(GREEN);
   coolTBar->set_colour_high(RED);
-  BarGauge * oilTBar =  new BarGauge(&display, &oilTemp, "OilT",   0, 150);
+
+  /* Oil temperature bar: we want to keep oil within a certain acceptable
+     temp. range, as oil that's too cold is not viscous enough, and oil that's
+     too hot can degrade and lose its effectiveness. The bar therefore is
+     cyan when the oil is below its limits (too cold), and red when the oil
+     is above its limits (too hot). When it's in the middle, it's green. */
+  BarGauge * oilTBar =  new BarGauge(&display, &oilTemp, "OilT", 0, 150);
   oilTBar->set_limit_higher(120);
   oilTBar->set_limit_lower(70);
   oilTBar->set_colour_low(CYAN);
   oilTBar->set_colour_normal(GREEN);
   oilTBar->set_colour_high(RED);
-  BarGauge * oilPBar =  new BarGauge(&display, &oilPres, "OilP",   0, 50);
+
+  /* Oil pressure bar: maintaining pressure is critical, and ensuring that
+     it does not drop too low is most important. However, oil pressure that's
+     too high is also a sign of a failure (e.g. blockage), so we set the limits
+     for both, and make the bar red for either scenario. */
+  BarGauge * oilPBar =  new BarGauge(&display, &oilPres, "OilP", 0, 50);
   oilPBar->set_limit_lower(20);
   oilPBar->set_limit_higher(50);
   /* We don't want oil pressure to be too low OR too high */
   oilPBar->set_colour_low(RED);
   oilPBar->set_colour_high(RED);
-  BarGauge * iatBar =   new BarGauge(&display, &iat, "IAT",        0, 50);
-  iatBar->set_colour_normal(WHITE);
-  BarGauge * boostBar = new BarGauge(&display, &boost, "Boost",    0, 15);
+
+  /* Intake air temperature bar: Colder air is better for engine performance,
+     so we don't set a lower limit. Hotter air will reduce engine performance,
+     but is also unlikely to be a major issue, so we set the higher limit but
+     assign the colour to orange, as red suggests a failure. */
+  BarGauge * iatBar =   new BarGauge(&display, &iat, "IAT", 0, 40);
+  iatBar->set_limit_higher(40);
+  iatBar->set_colour_high(ORANGE);
+
+  /* Turbo boost: boost levels will be very low at low RPM, so we don't need
+     any sort of lower limit. Additionally, low boost isn't necessarily good
+     or bad, so we make the bar white by default. Too high boost can definitely
+     be a problem, so we set an upper limit and set the bar to red if it's
+     exceeded. */
+  BarGauge * boostBar = new BarGauge(&display, &boost, "Boost", 0, 30);
+  boostBar->set_limit_higher(30);
+  boostBar->set_colour_high(RED);
   boostBar->set_colour_normal(WHITE);
+
+  /* Add all of the registered car gauges to the car layout */
   carBarLayout.add_gauge(coolTBar);
   carBarLayout.add_gauge(oilTBar);
   carBarLayout.add_gauge(oilPBar);
   carBarLayout.add_gauge(iatBar);
   carBarLayout.add_gauge(boostBar);
 
-  /* Car block gauge initialisation */
+  /* Configure block gauges for car sensors */
   BlockGauge * coolTBlock = new BlockGauge(&display, &coolTemp, "CoolT", 0, 100);
-  BlockGauge * oilTBlock = new BlockGauge(&display, &oilTemp, "OilT", 0, 140);
+  coolTBlock->set_limit_higher(100);
+  coolTBlock->set_limit_lower(84);
+  coolTBlock->set_text_colour_normal(DARKGREY);
+  coolTBlock->set_text_colour_low(BLACK);
+  coolTBlock->set_frame_colour(DARKGREY);
+  BlockGauge * oilTBlock = new BlockGauge(&display, &oilTemp, "OilT", 0, 125);
+  oilTBlock->set_limit_higher(120);
   BlockGauge * oilPBlock = new BlockGauge(&display, &oilPres, "OilP", 0, 65);
   BlockGauge * iatBlock = new BlockGauge(&display, &iat, "IAT", 0, 50);
   BlockGauge * boostBlock = new BlockGauge(&display, &boost, "Boost", 0, 15);
+
+  /* Add car block gauges */
   carBlockLayout.add_gauge(coolTBlock);
   carBlockLayout.add_gauge(oilTBlock);
   carBlockLayout.add_gauge(oilPBlock);
   carBlockLayout.add_gauge(iatBlock);
   carBlockLayout.add_gauge(boostBlock);
 
+  /* Bounds testing */
+  BarGauge * testMinBar = new BarGauge(&display, &testMin, "Min", 0, 100);
+  BarGauge * testMaxBar = new BarGauge(&display, &testMax, "Max", 0, 100);
+  BarGauge * testNegBar = new BarGauge(&display, &testNeg, "Neg", -10, 10);
+  BarGauge * testBMinBar = new BarGauge(&display, &testBelowMin, "BMin", 0, 100);
+  BarGauge * testAMaxBar = new BarGauge(&display, &testAboveMax, "AMax", 0, 100);
+  testMin.set_value(0);
+  testMax.set_value(100);
+  testNeg.set_value(-5);
+  testBelowMin.set_value(-10);
+  testAboveMax.set_value(110);
+
+  testLayout.add_gauge(testMinBar);
+  testLayout.add_gauge(testMaxBar);
+  testLayout.add_gauge(testNegBar);
+  testLayout.add_gauge(testBMinBar);
+  testLayout.add_gauge(testAMaxBar);
+
   /* Register the three layouts for use */
   add_layout(&carBarLayout);
-  add_layout(&adcLayout);
   add_layout(&carBlockLayout);
+  add_layout(&testLayout);
 }
 
 /* ------------------------------------------------------------------------- */
 /* Main Loop                                                                 */
 /* ------------------------------------------------------------------------- */
 void loop() {
-
   /* Pressing the touch screen will skip to the next layout */
   if(touchscreen.touched() && last_touch_state != 1) {
     next_layout();
   }
   last_touch_state = touchscreen.touched();
 
-  /* We want to handle touchscreen events very quickly, but don't want to 
-     call the intensive draw function that often. */
-  if(millis() - last_draw >= DRAW_DELAY) {
-    update_measurements();
-    draw();
-    last_draw = millis();
-  }
+  update_measurements();
+  draw();
 
   delay(MAIN_LOOP_DELAY);
 }
@@ -148,20 +181,12 @@ void draw() {
 /* ------------------------------------------------------------------------- */
 
 void update_measurements() {
-  adc0Data.set_value(analogRead(A0));
-  adc1Data.set_value(analogRead(A1));
-  adc2Data.set_value(analogRead(A2));
-  adc3Data.set_value(analogRead(A3));
-  adc4Data.set_value(analogRead(A4));
-  adc4Data.set_value(analogRead(A5));
-
   /* Generate some simulated values for car sensors */
-  coolTemp.set_value(random(87, 92));
-  oilTemp.set_value(random(105, 108));
-  oilPres.set_value(random(20, 35));
-  oilPres.set_value(random(37, 42));
-  iat.set_value(random(32, 35));
-  boost.set_value(random(7, 12));
+  coolTemp.set_value(random(42, 47));
+  oilTemp.set_value(random(132, 133));
+  oilPres.set_value(random(37, 38));
+  iat.set_value(random(24, 27));
+  boost.set_value(random(18, 21));
 }
 
 /* ------------------------------------------------------------------------- */

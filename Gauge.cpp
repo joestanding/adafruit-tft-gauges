@@ -17,7 +17,7 @@ Gauge::Gauge(Adafruit_ILI9341 * display, Measurement * measurement,
   this->limit_higher = 0;
   this->padding = GAUGE_PADDING_DEFAULT;
   this->measurement = measurement;
-  this->initialised = 0;
+  this->requires_redraw = 1;
   this->colour_high = RED;
   this->colour_low = CYAN;
   this->colour_normal = GREEN;
@@ -35,7 +35,8 @@ void Gauge::draw_frame(uint16_t x, uint16_t y, uint16_t w, uint16_t h,
 
 /* ------------------------------------------------------------------------- */
 
-void Gauge::initial_draw() {
+void Gauge::redraw() {
+  this->requires_redraw = 1;
 }
 
 /* ------------------------------------------------------------------------- */
@@ -56,14 +57,14 @@ void Gauge::draw_centred_string(const char *buf, int x, int y)
 /* Setters and Getters                                                       */
 /* ------------------------------------------------------------------------- */
 
-void Gauge::set_limit_lower(int32_t value) {
+void Gauge::set_limit_lower(double value) {
   this->has_limit_lower = 1;
   this->limit_lower = value;
 }
 
 /* ------------------------------------------------------------------------- */
 
-void Gauge::set_limit_higher(int32_t value) {
+void Gauge::set_limit_higher(double value) {
   this->has_limit_higher = 1;
   this->limit_higher = value;
   this->value_max = this->limit_higher * GAUGE_LIMIT_MULTIPLIER;
@@ -71,20 +72,14 @@ void Gauge::set_limit_higher(int32_t value) {
 
 /* ------------------------------------------------------------------------- */
 
-void Gauge::set_value(uint32_t value) {
+void Gauge::set_value(double value) {
   this->value = value;
 }
 
 /* ------------------------------------------------------------------------- */
 
-void Gauge::set_padding(uint16_t padding) {
-  this->padding = padding;
-}
-
-/* ------------------------------------------------------------------------- */
-
-void Gauge::set_initialised(uint8_t state) {
-  this->initialised = state;
+void Gauge::set_padding(uint8_t value) {
+  this->padding = value;
 }
 
 /* ------------------------------------------------------------------------- */

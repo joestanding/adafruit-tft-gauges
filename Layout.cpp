@@ -29,7 +29,7 @@ void Layout::add_gauge(Gauge * gauge) {
 void Layout::redraw() {
   for(uint8_t i = 0; i < MAX_GAUGES; i++) {
     if(this->gauges[i] != NULL) {
-      this->gauges[i]->set_initialised(0);
+      this->gauges[i]->redraw();
     }
   }  
 }
@@ -50,6 +50,14 @@ void Layout::enable_title() {
 
 void Layout::disable_title() {
   this->title_enabled = 0;
+}
+
+/* ------------------------------------------------------------------------- */
+
+/* ------------------------------------------------------------------------- */
+
+uint16_t Layout::get_gauge_count() {
+  return this->gauge_count;
 }
 
 /* ------------------------------------------------------------------------- */

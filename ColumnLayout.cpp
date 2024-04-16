@@ -11,8 +11,8 @@ ColumnLayout::ColumnLayout(Adafruit_ILI9341 * display) : Layout(display) {
 void ColumnLayout::draw() {
   uint16_t x = 0;
   uint16_t y = 0;
-  uint16_t width = 320 / this->gauge_count;
-  uint16_t height = 240;
+  uint16_t width = this->display->width() / this->gauge_count;
+  uint16_t height = this->display->height();
 
   if(this->title_enabled) {
     y = 27;

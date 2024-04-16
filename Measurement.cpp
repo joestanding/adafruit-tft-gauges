@@ -2,8 +2,7 @@
 
 /* ------------------------------------------------------------------------- */
 
-Measurement::Measurement(char * name) {
-  strncpy(this->name, name, MEASUREMENT_NAME_MAX);
+Measurement::Measurement() {
 }
 
 /* ------------------------------------------------------------------------- */
@@ -14,13 +13,13 @@ void Measurement::set_data_type(uint32_t data_type) {
 
 /* ------------------------------------------------------------------------- */
 
-void Measurement::set_value(int32_t value) {
+void Measurement::set_value(double value) {
   this->value = value;
 }
 
 /* ------------------------------------------------------------------------- */
 
-int32_t Measurement::get_value() {
+double Measurement::get_value() {
   return this->value;
 }
 

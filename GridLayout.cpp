@@ -12,8 +12,8 @@ GridLayout::GridLayout(Adafruit_ILI9341 * display) : Layout(display) {
 void GridLayout::draw() {
   uint16_t x = 0;
   uint16_t y = 0;
-  uint16_t width = 320 / this->gauges_wide;
-  uint16_t height = 240;
+  uint16_t width = this->display->width() / this->gauges_wide;
+  uint16_t height = this->display->height();
 
   for(uint8_t i = 0; i < this->gauge_count; i++) {
 

@@ -12,6 +12,7 @@ public:
   void add_gauge(Gauge * gauge);
   void redraw();
   void set_title(char * title);
+  uint16_t get_gauge_count();
   void enable_title();
   void disable_title();
 protected:
