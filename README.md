@@ -1,5 +1,5 @@
 # Adafruit TFT Gauge Library
-[Build Status](https://github.com/joestanding/adafruit-tft-gauges/workflows/Compile%20Sketch/badge.svg)
+![Build Status](https://github.com/joestanding/adafruit-tft-gauges/workflows/Compile%20Sketch/badge.svg)
 
 This library currently provides two types of configurable visual gauges that can be used on an Adafruit TFT screen to display various types of numerical information. The library was developed for my own personal needs, but I've tried to make the gauges fairly configurable so they should also be suitable for many other applications.
 
