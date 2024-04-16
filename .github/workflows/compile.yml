@@ -26,18 +26,18 @@ jobs:
           libraries: |
             # The "blink" sketch being compiled in this demo doesn't use any libraries, so just use an empty list
             - name: Adafruit_BusIO
-              source-url: git@github.com:adafruit/Adafruit_BusIO.git
+              source-url: https://github.com/adafruit/Adafruit_BusIO.git
             - name: Adafruit_FT6206_Library
-              source-url: git@github.com:adafruit/Adafruit_FT6206_Library.git
+              source-url: https://github.com/adafruit/Adafruit_FT6206_Library.git
             - name: Adafruit_GFX_Library
-              source-url: git@github.com:adafruit/Adafruit_GFX_Library.git
+              source-url: https://github.com/adafruit/Adafruit_GFX_Library.git
             - name: Adafruit_ILI9341
-              source-url: git@github.com:adafruit/Adafruit_ILI9341.git
+              source-url: https://github.com/adafruit/Adafruit_ILI9341.git
             - name: Adafruit_SH110X
-              source-url: git@github.com:adafruit/Adafruit_SH110X.git
+              source-url: https://github.com/adafruit/Adafruit_SH110X.git
             - name: Adafruit_STMPE610
-              source-url: git@github.com:adafruit/Adafruit_STMPE610.git
+              source-url: https://github.com/adafruit/Adafruit_STMPE610.git
             - name: Adafruit_TouchScreen
-              source-url: git@github.com:adafruit/Adafruit_TouchScreen.git
+              source-url: https://github.com/adafruit/Adafruit_TouchScreen.git
             - name: Adafruit_TSC2007
-              source-url: git@github.com:adafruit/Adafruit_TSC2007.git
+              source-url: https://github.com/adafruit/Adafruit_TSC2007.git
